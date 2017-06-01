@@ -1,0 +1,180 @@
+var errors = [];
+for (var prop in post) {
+  if (post[prop] == undefined)
+    errors.push(prop + " field is required");
+  else if (post[prop] == "") {
+    errors.push(prop + " field cannot be empty");
+  }
+}
+
+
+  Rx.Observable.fromPromise(
+      session.run(
+          'OPTIONAL MATCH (a:User)-[r:POSTS]->(b:Post) WHERE ID(a) = toInteger($id) RETURN b', {
+            'id': id
+          })
+    ).map(result => {
+      var posts = result.records.map((record) => {
+        record = record.get(0);
+
+        if (record == null) return;
+
+        return {
+          user: req.user,
+          post: {
+            id: record.identity.low,
+            date: record.properties.date,
+            text: record.properties.text
+          }
+        }
+      })
+  }).do(console.log).map(x => Rx.Observable.from(x))
+  .concatAll()
+  .map(user => Rx.Observable.fromPromise(
+                  session.run(
+                    'OPTIONAL MATCH (a:User)-[r:POSTS]->(b:Post) WHERE ID(a) = toInteger($id) RETURN b', {
+                      'id': user.id
+                    }))
+  )
+  .mergeAll()
+  .reduce((arr,item)=>{
+    arr.push(item);
+    return arr;
+  },[])
+  .subscribe(posts => {
+   res.json(posts);
+  })
+
+
+router.get('/me/posts', (req, res) => {
+  var id = req.user.id;
+  var limit = req.query.limit || 20;
+
+  async.parallel([
+      function(callback) {
+        session.run(
+            'OPTIONAL MATCH (a:User)-[r:POSTS]->(b:Post) WHERE ID(a) = toInteger($id) RETURN a,b', {
+              'id': id
+            })
+          .then((result) => {
+            var posts = result.records.map((record) => {
+              var user = record.get(0);
+              var post = record.get(1);
+
+              if (record == null) return;
+
+              return {
+                user: {
+                  cover:  user.properties.cover,
+                  image:  user.properties.image,
+                  description:  user.properties.descr,
+                  lastname:  user.properties.last,
+                  phone:  user.properties.phone,
+                  username:  user.properties.usr,
+                  id:  user.identity.low,
+                  password:  user.properties.pwd,
+                  email:  user.properties.email,
+                  firstname:  user.properties.first
+                },
+                post: {
+                  id: post.identity.low,
+                  date: post.properties.date,
+                  hour: post.properties.hour,
+                  text: post.properties.text,
+                  image: post.properties.image
+                }
+              }
+            });
+            return callback(null, posts[0] == null ? [] : posts);
+          })
+          .catch((error) => {
+            return callback(error, {
+              status: 500,
+              message: "Internal Server Error"
+            });
+          });
+      },
+      function(callback) {
+        session.run(
+            'OPTIONAL MATCH (a:User)-[r:FOLLOWS]->(b:User) WHERE ID(a) = toInteger($id) RETURN b', {
+              'id': id
+            })
+          .then((result) => {
+            var users = result.records.map((record) => {
+              record = record.get(0);
+
+              if (record == null) return;
+
+              return {
+                id: record.identity.low,
+                firstname: record.properties.first,
+                lastname: record.properties.last,
+                email: record.properties.email,
+                phone: record.properties.phone,
+                username: record.properties.usr,
+                password: record.properties.pwd,
+                description: record.properties.descr,
+                cover: record.properties.cover,
+                image: record.properties.image
+              }
+            });
+
+            var allposts = [];
+            async.each(users, (user, callback) => {
+              session.run(
+                  'OPTIONAL MATCH (a:User)-[r:POSTS]->(b:Post) WHERE ID(a) = toInteger($id) RETURN b', {
+                    'id': user.id
+                  })
+                .then((result) => {
+                  result.records.forEach((record) => {
+                    record = record.get(0);
+
+                    if (record != null)
+                      allposts.push({
+                        user: user,
+                        post: {
+                          id: record.identity.low,
+                          date: record.properties.date,
+                          hour: record.properties.hour,
+                          text: record.properties.text,
+                          image: record.properties.image
+                        }
+                      });
+                  });
+
+                  callback();
+                }).catch((error) => {
+                  callback(error, {
+                    status: 500,
+                    message: "Internal Server Error"
+                  });
+                });
+            }, function(err) {
+              if (err)
+                return callback(err);
+              return callback(null, allposts);
+            });
+          })
+          .catch((error) => {
+            return callback(error, {
+              status: 500,
+              message: "Internal Server Error"
+            });
+          });
+      }
+    ],
+    function(err, results) {
+      if (err) return res.json({
+        err
+      });
+      var result = results[0].concat(results[1]);
+      result = result.slice(0, limit).sort((a, b) => {
+        return moment(b.post.hour, 'HH:mm').toDate() -
+               moment(a.post.hour, 'HH:mm').toDate()
+      }).sort((a, b) => {
+        return moment(b.post.date, 'DD/MM/YYYY').toDate() -
+               moment(a.post.date, 'DD/MM/YYYY').toDate()
+      })
+      res.json(result);
+    });
+});
