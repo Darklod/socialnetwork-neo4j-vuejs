@@ -1,8 +1,0 @@
-client/.DS_Store
-client/node_modules/
-client/dist/
-client/npm-debug.log*
-client/yarn-debug.log*
-client/yarn-error.log*
-server/node_modules/
-
