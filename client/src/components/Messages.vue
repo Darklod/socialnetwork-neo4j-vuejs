@@ -33,6 +33,8 @@
 import MessageList from './message/MessageList'
 import UserList from './message/UserList'
 import { createMessage } from '../../utils/users'
+import smoothScroll from '../../utils/smoothScroll'
+
 export default {
   components: {
     'message-list': MessageList,
@@ -50,6 +52,11 @@ export default {
         //  websocket send in broadcast
       })
     }
+  },
+  mounted () {
+    //  when new message received
+    var elem = document.querySelector('#messages')
+    smoothScroll(elem, elem.scrollHeight, 2000)
   }
 }
 </script>

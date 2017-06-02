@@ -1,12 +1,15 @@
 <template>
-  <div v-if="message" class="message">
-    <div :class="message.isLoggedUser ? 'left':'right'">
-      <div v-if="message.image">
-        <img :src="'/static/images/' + message.image"/>
+  <div>
+    <div v-if="message.date" class="has-text-centered">{{message.date}}<hr></div>
+    <div v-else-if="message" class="message">
+      <div :class="(message.isLoggedUser ? 'left':'right') + ' box'">
+        <div v-if="message.image">
+          <img :src="'/static/images/' + message.image"/>
+        </div>
+        <span>{{message.hour}}</span> {{message.text}}
       </div>
-      <span>{{message.date}} {{message.hour}}</span> {{message.text}}
+      <div style="clear:both"></div>
     </div>
-    <div style="clear:both"></div>
   </div>
 </template>
 
@@ -26,11 +29,18 @@ export default {
     background-color: inherit; 
   }
   .left {
-    width: 30%;
+    width: 35%;
     float: left;
+    background-color: lightgreen;
   }
   .right {
-    width: 30%;
+    width: 35%;
     float: right;
+    background-color: lightblue;
+  }
+  .box{
+    margin-bottom: 0px;
+    padding: 0.5rem;
+    border-radius: 0px;
   }
 </style>

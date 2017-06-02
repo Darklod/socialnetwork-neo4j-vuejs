@@ -244,7 +244,6 @@ router.get('/:username/followed', (req, res) => {
     });
 });
 
-//IDENTIFICARE AUTORE DEL MESSAGGIO
 router.get('/me/messages/:username', (req, res) => {
   var me = req.user.username;
   var username = req.params.username;
@@ -274,6 +273,7 @@ router.get('/me/messages/:username', (req, res) => {
         }
       });
       
+      //Remove null objects
       var newArray = new Array();
       for (var i = 0; i < nodes.length; i++) {
         if (nodes[i]) {
@@ -281,7 +281,15 @@ router.get('/me/messages/:username', (req, res) => {
         }
       }
 
-      res.json(nodes);
+      newArray = newArray.sort((a, b) => {
+        return moment(a.hour, 'HH:mm').toDate() -
+               moment(b.hour, 'HH:mm').toDate()
+      }).sort((a, b) => {
+        return moment(a.date, 'DD/MM/YYYY').toDate() -
+               moment(b.date, 'DD/MM/YYYY').toDate()
+      })
+
+      res.json(newArray);
     })
     .catch((error) => {
       res.status(500).json({
