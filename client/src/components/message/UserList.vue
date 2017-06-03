@@ -1,7 +1,12 @@
 <template>
-    <div>
-        <user v-for="user in users" key="user.id" :user="user"></user>
+  <div>
+    <ul v-if="users && users.length">
+      <user v-for="user in users" key="user.id" :user="user"></user>
+    </ul>
+    <div v-else style="padding:5px;">
+      No users yet.
     </div>
+  </div>
 </template>
 
 <script>
@@ -29,7 +34,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

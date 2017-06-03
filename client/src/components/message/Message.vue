@@ -27,6 +27,7 @@ export default {
     width: 100%;
     margin-bottom: 0px;
     background-color: inherit; 
+    font-size: 12px;
   }
   .left {
     width: 35%;

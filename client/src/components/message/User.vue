@@ -1,7 +1,10 @@
 <template>
-  <div v-if="user">
+  <li v-if="user">
+    <div>
+      <img :src="user.image ? '/static/images/profiles/' + user.image : '/static/images/default/avatar.png'"  />
       <router-link :to="'/messages/' + user.username">{{user.username}}</router-link>
-  </div>
+    </div>
+  </li>
 </template>
 
 <script>
@@ -12,7 +15,19 @@ export default {
 
 <style scoped>
 div{
+    display: flex;
+}
+li{
     border-bottom: 1px solid lightgray;
-    padding: 10px;
+    padding: 5px;
+}
+a{
+  display: flex;
+  align-items: center;
+}
+img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
 }
 </style>

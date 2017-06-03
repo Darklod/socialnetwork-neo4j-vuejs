@@ -1,7 +1,12 @@
 <template>
-    <div>
-        <message v-for="message in messages" key="message.id" :message="message"></message>
+  <div>
+    <div v-if="messages && messages.length">
+      <message v-for="message in messages" key="message.id" :message="message"></message>
     </div>
+    <div v-else style="padding:5px;">
+      No messages yet.
+    </div>
+  </div>
 </template>
 
 <script>

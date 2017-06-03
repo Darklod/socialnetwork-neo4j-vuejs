@@ -72,4 +72,8 @@ export default {
   margin:0px;
   overflow-y: scroll;
 }
+.section{
+  margin-left: 20%;
+  margin-right: 20%;
+}
 </style>
