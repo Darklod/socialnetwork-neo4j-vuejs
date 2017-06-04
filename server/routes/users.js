@@ -266,8 +266,7 @@ router.get('/me/messages/:username', (req, res) => {
         return {
           id: relationship.identity.low,
           text: relationship.properties.text,
-          hour: relationship.properties.hour,
-          date: relationship.properties.date,
+          createdAt: relationship.properties.createdAt,
           image: relationship.properties.image,
           isLoggedUser: node.identity.low == relationship.start
         }
@@ -282,11 +281,7 @@ router.get('/me/messages/:username', (req, res) => {
       }
 
       newArray = newArray.sort((a, b) => {
-        return moment(a.hour, 'HH:mm').toDate() -
-               moment(b.hour, 'HH:mm').toDate()
-      }).sort((a, b) => {
-        return moment(a.date, 'DD/MM/YYYY').toDate() -
-               moment(b.date, 'DD/MM/YYYY').toDate()
+        return a.createdAt - b.createdAt
       })
 
       res.json(newArray);
@@ -310,18 +305,18 @@ router.post('/me/messages/:username', (req, res) => {
     text: message.text,
     image: message.image
   }
-  message["date"] = moment().format("DD/MM/YYYY")
-  message["hour"] = moment().format("HH:mm")
 
   session.run(
-      'OPTIONAL MATCH (a:User{usr:$me}),(b:User{usr:$username}) CREATE (a)-[r:MESSAGE $msg]->(b) ', {
+      'OPTIONAL MATCH (a:User{usr:$me}),(b:User{usr:$username}) CREATE (a)-[r:MESSAGE $msg]->(b) SET r.createdAt = timestamp() ', {
         'username': username,
         'me': me,
         'msg': message
       })
       .then((result) => {
         res.json({
-          success: result.summary.counters._stats.nodesCreated > 0
+          success: result.summary.counters._stats.nodesCreated > 0,
+          message,
+          from: me
         });
     })
     .catch((error) => {

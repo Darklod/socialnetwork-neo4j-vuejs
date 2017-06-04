@@ -9,7 +9,7 @@
         <div class="column">
           <div class="box">
             <div class="box" id="messages">
-              <message-list class="msg-list"></message-list>
+              <message-list class="msg-list" :messages="messages"></message-list>
             </div>
             <div class="field has-addons">
               <p class="control" style="width:100%">
@@ -32,7 +32,7 @@
 <script>
 import MessageList from './message/MessageList'
 import UserList from './message/UserList'
-import { createMessage } from '../../utils/users'
+import { createMessage, getMessages } from '../../utils/users'
 import smoothScroll from '../../utils/smoothScroll'
 
 export default {
@@ -43,20 +43,62 @@ export default {
   data () {
     return {
       text: '',
-      image: ''
+      image: '',
+      messages: []
     }
   },
   methods: {
+    getMessages () {
+      if (this.$route.params.username) {
+        getMessages(this.$route.params.username).then((response) => {
+          var date = null
+          var messages = []
+          //  works only if the list is already ordered
+          response.forEach((x) => {
+            if (x.date !== date) {
+              date = x.date
+              messages.push({date: date})
+            }
+            delete x.date
+            messages.push(x)
+          })
+          this.messages = messages
+        })
+      }
+    },
     sendMessage () {
+      console.log('ciao')
       createMessage(this.$route.params.username, this.text, this.image).then((response) => {
-        //  websocket send in broadcast
+        //  if (response.success) {
+        this.$socket.emit('newMessage', response)
+
+        delete response.message['date']
+        response.message.isLoggedUser = true
+        this.messages.push(response.message)
+        var elem = document.querySelector('#messages')
+        smoothScroll(elem, elem.scrollHeight, 2000)
+        //  }
       })
     }
   },
+  created () {
+    this.getMessages()
+  },
   mounted () {
-    //  when new message received
-    var elem = document.querySelector('#messages')
-    smoothScroll(elem, elem.scrollHeight, 2000)
+    window.onload = function () {
+      var elem = document.querySelector('#messages')
+      smoothScroll(elem, elem.scrollHeight, 0)
+    }
+  },
+  sockets: {
+    newMessage (data) {
+      console.log('new message received', data)
+      delete data.message['date']
+      data.message.isLoggedUser = false
+      this.messages.push(data.message)
+      var elem = document.querySelector('#messages')
+      smoothScroll(elem, elem.scrollHeight, 2000)
+    }
   }
 }
 </script>

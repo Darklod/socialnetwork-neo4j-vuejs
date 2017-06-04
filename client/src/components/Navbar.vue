@@ -85,6 +85,16 @@ export default {
     toggleMenu: function (e) {
       e.target.classList.toggle('is-active')
       document.querySelector('.nav-menu').classList.toggle('is-active')
+    },
+    getUser () {
+      var user = jwt.decode(this.$auth.getToken())
+
+      delete user['exp']
+      delete user['token']
+
+      this.$auth.setAuthenticatedUser(user)
+      this.user = this.$auth.getAuthenticatedUser().username
+      this.isAuth = this.$auth.isAuthenticated()
     }
   },
   computed: {
@@ -128,17 +138,11 @@ export default {
     document.querySelector('.nav-menu').classList.remove('is-active')
   },
   created () {
-    var user = jwt.decode(this.$auth.getToken())
-
-    delete user['exp']
-    delete user['token']
-
-    this.$auth.setAuthenticatedUser(user)
-    this.user = this.$auth.getAuthenticatedUser().username
-    this.isAuth = this.$auth.isAuthenticated()
+    this.getUser()
   },
   watch: {
     $route: function () {
+      this.getUser()
       document.querySelector('.nav-toggle').classList.remove('is-active')
       document.querySelector('.nav-menu').classList.remove('is-active')
     }

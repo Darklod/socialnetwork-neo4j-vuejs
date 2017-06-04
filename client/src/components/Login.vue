@@ -55,6 +55,8 @@ export default {
           var decoded = jwt.decode(token)
           var expiration = decoded.exp
 
+          this.$socket.emit('login', decoded)
+
           this.$auth.setToken(token, expiration)
 
           this.$router.push('/')

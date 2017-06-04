@@ -12,7 +12,7 @@
                   <a class="card-avatar">
                     <input type="file" v-if="IsTheLoggedUser" id="image" style="display:none" @change="imageChanged" />
                     <label for="image" style="cursor:pointer">
-                      <img src="/static/images/default-image.png" ref="image" class="card-avatar-img">
+                      <img src="/static/images/default/avatar.png" ref="image" class="card-avatar-img">
                     </label>
                   </a>
                </center>
@@ -142,7 +142,6 @@ export default {
       getFollowedByUsername(username).then(response => { this.followed = response })
       getPostsByUsername(username).then(response => {
         response.forEach((d) => {
-          console.log(d)
           var re = new RegExp(/#([^\s]*)/ig, 'gi')
           d.text = d.text.replace(re, '<a href=\'/tags/$1\'>$&</a>')
         })

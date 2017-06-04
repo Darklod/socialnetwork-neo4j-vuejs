@@ -14,7 +14,8 @@
     "axios": "^0.16.1",
     "masonry-layout": "^4.2.0",
     "vue": "^2.2.6",
-    "vue-router": "^2.3.1"
+    "vue-router": "^2.3.1",
+    "vue-socket.io": "^2.1.1-a"
   },
   "devDependencies": {
     "fs": "0.0.1-security",

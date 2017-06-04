@@ -51,7 +51,7 @@
         }, 0)
       }
     },
-    mounted () {
+    created () {
       this.getPosts()
     },
     watch: {

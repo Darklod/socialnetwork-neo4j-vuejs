@@ -8,24 +8,27 @@ var passport = require('passport');
 
 var app = express();
 
-//Configurations
+//  Configurations
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(compression());
 app.use(morgan('dev'));
 
-//Security
+//  Security
 app.disable('x-powered-by');
 
-//Authorization
+//  Authorization
 app.use(passport.initialize());
 require('./config/passport')(passport);
 
-//Routes
+//  Routes
 app.use('/', require('./routes/auth'));
 app.use('/api/users', passport.authenticate('jwt', { session: false }), require('./routes/users'));
 app.use('/api/follows', passport.authenticate('jwt', { session: false }), require('./routes/follows'));
+
+//  WebSocket Server
+require('./socket');
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");

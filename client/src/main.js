@@ -6,6 +6,10 @@ import router from './router'
 
 import Auth from '../packages/auth'
 
+import VueSocketio from 'vue-socket.io'
+
+Vue.use(VueSocketio, 'http://localhost:3001')
+
 Vue.config.productionTip = false
 
 Vue.use(Auth)
