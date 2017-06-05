@@ -1,5 +1,17 @@
 <template>
   <div class="container">
+    
+
+    <center>
+      <h1>Title</h1>
+      <div>
+        <h1 class="is-pulled-left">Login</h1>
+        <img src="/static/images/icon.png"/>
+        <h1 class="is-pulled-right">Register</h1>
+      </div>
+    </center>
+
+
     <section class="section main">
       <div class="columns">
         <div class="column">
