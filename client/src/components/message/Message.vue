@@ -6,7 +6,8 @@
         <div v-if="message.image">
           <img :src="'/static/images/' + message.image"/>
         </div>
-        <span>{{message.hour}}</span> {{message.text}}
+        <span style="display: block;">{{message.text}}</span>
+        <small class="is-pulled-right">{{message.hour}}</small>
       </div>
       <div style="clear:both"></div>
     </div>

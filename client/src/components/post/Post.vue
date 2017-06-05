@@ -6,7 +6,7 @@
                    'profiles/'+ post.userImage :
                    'default/avatar.png')">
         <strong>{{post.username}}</strong>
-        <div style="float:right"><small>{{post.hour}} {{post.date}}</small></div>
+        <div class="is-pulled-right"><small>{{time}}</small></div>
         <div style="clear:both"></div>
       </div>
       <div v-if="post.postImage && post.postImage!=''" class="card-image">
@@ -67,8 +67,14 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
-  props: ['post', 'toggleVote']
+  props: ['post', 'toggleVote'],
+  computed: {
+    time () {
+      return moment(moment.unix('' + this.post.createdAt)).fromNow()
+    }
+  }
 }
 </script>
 

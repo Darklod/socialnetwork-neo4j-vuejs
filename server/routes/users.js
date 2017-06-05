@@ -263,10 +263,14 @@ router.get('/me/messages/:username', (req, res) => {
 
         var node = record.get(1);
         
+        var createdAt = relationship.properties.createdAt.high + relationship.properties.createdAt.low;
+
         return {
           id: relationship.identity.low,
           text: relationship.properties.text,
-          createdAt: relationship.properties.createdAt,
+          createdAt: createdAt,
+          hour: relationship.properties.hour,
+          date: relationship.properties.date,
           image: relationship.properties.image,
           isLoggedUser: node.identity.low == relationship.start
         }
@@ -303,7 +307,9 @@ router.post('/me/messages/:username', (req, res) => {
   //controlli
   message = {
     text: message.text,
-    image: message.image
+    image: message.image,
+    hour: moment().format('HH:mm'),
+    date: moment().format('DD/MM/YYYY')
   }
 
   session.run(
@@ -356,15 +362,15 @@ router.get('/me/posts', (req, res) => {
 
   var cql = 'MATCH (a:User{usr:$usr})-[:POSTS]->(s:Post)\
             RETURN a.usr as username,a.image as userImage,ID(s) as id, s.text as text,\
-            s.image as postImage, s.date as date,s.hour as hour,\
+            s.image as postImage, s.date as date,s.hour as hour, s.createdAt as createdAt,\
             size((s)<-[:LIKES]-(:User)) as likes,size((a)-[:LIKES]->(s))>0 as liked\
-            ORDER BY date DESC ,hour ASC\
+            ORDER BY createdAt DESC\
             UNION\
             MATCH (a:User{usr:$usr})-[f:FOLLOWS]->(b:User)-[:POSTS]->(s:Post)\
             RETURN b.usr as username,b.image as userImage,ID(s) as id,s.text as text,\
-            s.image as postImage, s.date as date ,s.hour as hour,\
+            s.image as postImage, s.date as date ,s.hour as hour, s.createdAt as createdAt,\
             size((s)<-[:LIKES]-(:User)) as likes,size((a)-[:LIKES]->(s))>0 as liked\
-            ORDER BY date DESC ,hour ASC';
+            ORDER BY createdAt DESC';
 
   session.run(cql,{usr:usr}).then((results) => {
     results = results.records.map((record) => {
@@ -372,16 +378,14 @@ router.get('/me/posts', (req, res) => {
       record.keys.forEach((key,i) => {
         obj[key] = record._fields[i];
       });
+      
       obj['id'] = obj['id'].low;
       obj['likes'] = obj['likes'].low;
+      obj['createdAt'] = parseInt(obj['createdAt']) / 1000;
       return obj;
     })
     results = results.slice(0, limit).sort((a, b) => {
-      return moment(b.hour, 'HH:mm').toDate() -
-             moment(a.hour, 'HH:mm').toDate()
-    }).sort((a, b) => {
-      return moment(b.date, 'DD/MM/YYYY').toDate() -
-             moment(a.date, 'DD/MM/YYYY').toDate()
+      return b.createdAt - a.createdAt
     })
     res.json(results);
   });
@@ -412,7 +416,7 @@ router.post('/me/posts', (req, res) => {
   var id = req.user.id;
 
   var cql = 'MATCH (a:User) WHERE ID(a) = toInteger($id) \
-             CREATE (b:Post) SET b = $post \
+             CREATE (b:Post) SET b = $post SET b.createdAt = "" + timestamp() \
              CREATE (a)-[:POSTS]->(b)';
 
   var data = { post: post};
@@ -421,7 +425,7 @@ router.post('/me/posts', (req, res) => {
   if(tags) {
     tags = '{tag:"' + tags.join('"},{tag:"') + '"}';
     cql = 'MATCH (u:User) WHERE ID(u) = toInteger($id) \
-           CREATE (p:Post) SET p = $post \
+           CREATE (p:Post) SET p = $post SET p.createdAt = "" + timestamp()\
            CREATE (u)-[:POSTS]->(p)\
            FOREACH (props IN [' + tags + '] |\
             MERGE (t:Tag{tag:props.tag})\
@@ -450,9 +454,9 @@ router.get('/posts/:tag', (req, res) => {
   var usr = req.user.username;
 
   var cql = 'MATCH (u:User{usr:$usr}),(a:Post)-[r:HAS]->(b:Tag) WHERE b.tag = $tag RETURN a.date as date,\
-			       a.image as image, a.hour as hour, a.text as text, ID(a) as id,\
+			       a.image as image, a.hour as hour, a.text as text, ID(a) as id, a.createdAt as createdAt,\
              size((a)<-[:LIKES]-(:User)) as likes, size((u)-[:LIKES]->(a))>0 as liked\
-             ORDER BY a.date DESC ,a.hour ASC';
+             ORDER BY a.createdAt DESC';
 
   session.run(cql, {tag: tag, usr: usr})
     .then((results) => {
@@ -463,6 +467,7 @@ router.get('/posts/:tag', (req, res) => {
           });
           obj['id'] = obj['id'].low;
           obj['likes'] = obj['likes'].low;
+          obj['createdAt'] = parseInt(obj['createdAt']) / 1000;
           return obj;
         })
       res.json(results);
@@ -492,6 +497,7 @@ router.get('/:username/posts', (req, res) => {
           id: record.identity.low,
           date: record.properties.date,
           hour: record.properties.hour,
+          createdAt: record.properties.createdAt,
           text: record.properties.text,
           image: record.properties.image
         }

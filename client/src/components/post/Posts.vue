@@ -55,7 +55,7 @@
       this.getPosts()
     },
     watch: {
-      $route: function (a) {
+      $route: function () {
         this.getPosts()
       }
     }

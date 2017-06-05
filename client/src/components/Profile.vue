@@ -74,7 +74,7 @@
                         <div class="content">
                            <div v-html="post.text"></div>
                            <br>
-                           <small>{{post.hour}} {{post.date}}</small>
+                           <small>{{post.date}}</small>
                         </div>
                      </div>
                   </div>
@@ -96,6 +96,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { getUserByUsername,
          getFollowersByUsername,
          getFollowedByUsername,
@@ -144,6 +145,7 @@ export default {
         response.forEach((d) => {
           var re = new RegExp(/#([^\s]*)/ig, 'gi')
           d.text = d.text.replace(re, '<a href=\'/tags/$1\'>$&</a>')
+          d.date = moment.unix('' + d.createdAt / 1000).format('D MMMM YYYY HH:mm')
         })
         this.posts = response
         setTimeout(() => {

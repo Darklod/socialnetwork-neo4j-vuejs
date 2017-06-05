@@ -60,6 +60,6 @@ export default new Router({
       name: 'NotFound',
       component: NotFound
     }
-  ],
-  linkActiveClass: 'is-active'
+  ]
+  //  ,linkActiveClass: 'is-active'
 })

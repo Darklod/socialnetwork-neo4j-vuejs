@@ -8,6 +8,9 @@
         </div>
         <div class="column">
           <div class="box">
+            <div class="header">
+              {{this.$route.params.username || "-"}}
+            </div>
             <div class="box" id="messages">
               <message-list class="msg-list" :messages="messages"></message-list>
             </div>
@@ -51,6 +54,7 @@ export default {
     getMessages () {
       if (this.$route.params.username) {
         getMessages(this.$route.params.username).then((response) => {
+          console.log(response[0])
           var date = null
           var messages = []
           //  works only if the list is already ordered
@@ -67,13 +71,11 @@ export default {
       }
     },
     sendMessage () {
-      console.log('ciao')
       createMessage(this.$route.params.username, this.text, this.image).then((response) => {
         //  if (response.success) {
         this.$socket.emit('newMessage', response)
-
         delete response.message['date']
-        response.message.isLoggedUser = true
+        response.message.isLoggedUser = false
         this.messages.push(response.message)
         var elem = document.querySelector('#messages')
         smoothScroll(elem, elem.scrollHeight, 2000)
@@ -90,11 +92,19 @@ export default {
       smoothScroll(elem, elem.scrollHeight, 0)
     }
   },
+  watch: {
+    $route: function () {
+      window.onload = function () {
+        var elem = document.querySelector('#messages')
+        smoothScroll(elem, elem.scrollHeight, 0)
+      }
+    }
+  },
   sockets: {
     newMessage (data) {
       console.log('new message received', data)
       delete data.message['date']
-      data.message.isLoggedUser = false
+      data.message.isLoggedUser = true
       this.messages.push(data.message)
       var elem = document.querySelector('#messages')
       smoothScroll(elem, elem.scrollHeight, 2000)
@@ -110,12 +120,20 @@ export default {
   padding: 0px
 }
 #messages{
-  height: 364px;
+  height: 330px;
   margin:0px;
   overflow-y: scroll;
+  box-shadow: none;
 }
 .section{
   margin-left: 20%;
   margin-right: 20%;
+}
+.header{
+  padding: 5px;
+  padding-left: 15px;
+  background-color: #2592eb;
+  color:white;
+  font-size: 16px;
 }
 </style>
