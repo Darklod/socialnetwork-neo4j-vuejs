@@ -62,7 +62,8 @@ export default {
         return x.substring(1)
       })
       createPost(this.text, this.image, tags).then((res) => {
-        console.log(res)
+        //  this.$children.posts.getPosts()
+        //  should refresh posts list
       })
     },
     openModal () {
