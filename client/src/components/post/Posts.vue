@@ -43,11 +43,18 @@
       toggleVote (id, liked) {
         setTimeout(() => {
           if (!liked) {
-            upvotePost(id)
+            upvotePost(id).then(() => {
+              liked = !liked
+              this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: id, like: true })
+              this.getPosts()
+            })
           } else {
-            downvotePost(id)
+            downvotePost(id).then(() => {
+              liked = !liked
+              this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: id, like: false })
+              this.getPosts()
+            })
           }
-          this.getPosts()
         }, 0)
       }
     },
@@ -57,6 +64,11 @@
     watch: {
       $route: function () {
         this.getPosts()
+      }
+    },
+    sockets: {
+      like (data) {
+        console.log(data)
       }
     }
   }

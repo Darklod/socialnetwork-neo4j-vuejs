@@ -27,4 +27,8 @@ io.on('connection', function(socket){
         //} 
      });*/ 
   });
+
+  socket.on('like', function(data){
+    socket.broadcast.emit('like', data);
+  });
 });

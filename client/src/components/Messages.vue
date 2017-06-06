@@ -102,7 +102,6 @@ export default {
   },
   sockets: {
     newMessage (data) {
-      console.log('new message received', data)
       delete data.message['date']
       data.message.isLoggedUser = true
       this.messages.push(data.message)

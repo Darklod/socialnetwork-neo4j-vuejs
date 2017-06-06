@@ -11,7 +11,6 @@
       </div>
     </center>
 
-
     <section class="section main">
       <div class="columns">
         <div class="column">
