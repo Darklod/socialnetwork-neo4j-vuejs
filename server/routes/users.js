@@ -1,6 +1,8 @@
 var session = require('../config/db').session;
 var async = require('async');
 var moment = require('moment');
+var fs = require('fs');
+var md5 = require('md5')
 var express = require('express');
 var router = express.Router();
 
@@ -396,7 +398,7 @@ router.post('/me/posts', (req, res) => {
     text: req.body.text,
     date: moment().format('DD/MM/YYYY'),
     hour: moment().format('HH:mm'),
-    image: req.body.image
+    image: ''
   }
   var tags = req.body.tags;
 
@@ -431,9 +433,20 @@ router.post('/me/posts', (req, res) => {
             MERGE (t:Tag{tag:props.tag})\
             CREATE (p)-[:HAS]->(t))'
   }
+  
+  var base64 = req.body.image.split(',')[1];
+  var format = req.body.image.split(',')[0].split('/')[1].split(';')[0];
+  var path = __dirname + '/../../client/static/images/' + md5(base64) + '.' + format;
 
-  console.log(cql);
+  fs.writeFile(path, base64, {encoding: 'base64'} , function (err) {
+    if (err) {
+        console.log(err)
+        return res.json({err: err});
+    }    
+  });
 
+  data.post['image'] = md5(base64) + '.' + format;
+  
   session.run(cql, data)
     .then((results) => {
       console.log(results);

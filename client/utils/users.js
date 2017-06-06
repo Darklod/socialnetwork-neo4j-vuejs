@@ -7,6 +7,7 @@ export { getUsers,
          getPostsByTag,
          getPostsByUsername,
          createPost,
+         uploadImage,
          upvotePost,
          downvotePost,
          getMessages,
@@ -52,6 +53,11 @@ function getPostsByTag (tag) {
 function createPost (text, image, tags) {
   const url = `${BASE_URL}/api/users/me/posts`
   return axios.post(url, {text, image, tags}, {'headers': { 'Authorization': token }}).then(response => response.data)
+}
+
+function uploadImage (image) {
+  const url = `${BASE_URL}/api/upload`
+  return axios.post(url, {image}, {'headers': { 'Authorization': token }}).then(response => response.data)
 }
 
 function upvotePost (post) {

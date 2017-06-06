@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "form-data": "^2.1.4",
     "masonry-layout": "^4.2.0",
     "vue": "^2.2.6",
     "vue-router": "^2.3.1",

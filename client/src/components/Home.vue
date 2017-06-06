@@ -52,7 +52,7 @@ export default {
   data () {
     return {
       text: '',
-      image: ''
+      image: '' // new FormData()
     }
   },
   methods: {
@@ -62,7 +62,6 @@ export default {
         return x.substring(1)
       })
       createPost(this.text, this.image, tags).then((res) => {
-        //  upload file
         console.log(res)
       })
     },
@@ -77,8 +76,12 @@ export default {
 
       fileReader.readAsDataURL(e.target.files[0])
 
+      //  this.data = new FormData()
+      //  this.data.append('image', e.target.files[0])
+
       fileReader.onload = (e) => {
         this.$refs.preview.src = e.target.result
+        this.image = e.target.result
       }
     }
   }
