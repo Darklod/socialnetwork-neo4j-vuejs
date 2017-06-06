@@ -24,7 +24,7 @@
             </div>
             <div class="level-right">
               <a class="level-item">
-                <span class="icon is-small" @click.prevent="toggleVote(post.id, post.liked)">
+                <span class="icon is-small" @click.prevent="toggleVote">
                   <i v-if="post.liked" class="fa fa-heart"></i>
                   <i v-if="!post.liked" class="fa fa-heart-o"></i>
                 </span>
@@ -68,11 +68,40 @@
 
 <script>
 import moment from 'moment'
+import { upvotePost, downvotePost } from '../../../utils/users'
 export default {
-  props: ['post', 'toggleVote'],
+  props: ['post'],
   computed: {
     time () {
       return moment(moment.unix('' + this.post.createdAt)).fromNow()
+    }
+  },
+  sockets: {
+    like (data) {
+      if (data.like) {
+        this.post.likes++
+        this.liked = true
+      } else {
+        this.post.likes--
+        this.liked = false
+      }
+    }
+  },
+  methods: {
+    toggleVote () {
+      setTimeout(() => {
+        if (!this.liked) {
+          upvotePost().then(() => {
+            this.liked = !this.liked
+            this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: this.id, like: true })
+          })
+        } else {
+          downvotePost().then(() => {
+            this.liked = !this.liked
+            this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: this.id, like: false })
+          })
+        }
+      }, 0)
     }
   }
 }

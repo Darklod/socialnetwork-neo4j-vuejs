@@ -8,7 +8,7 @@
 
 <script>
   import post from './Post.vue'
-  import { getPosts, getPostsByTag, upvotePost, downvotePost } from '../../../utils/users'
+  import { getPosts, getPostsByTag } from '../../../utils/users'
 
   export default {
     components: {
@@ -39,23 +39,6 @@
             this.posts = data
           })
         }
-      },
-      toggleVote (id, liked) {
-        setTimeout(() => {
-          if (!liked) {
-            upvotePost(id).then(() => {
-              liked = !liked
-              this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: id, like: true })
-              this.getPosts()
-            })
-          } else {
-            downvotePost(id).then(() => {
-              liked = !liked
-              this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: id, like: false })
-              this.getPosts()
-            })
-          }
-        }, 0)
       }
     },
     created () {
@@ -64,11 +47,6 @@
     watch: {
       $route: function () {
         this.getPosts()
-      }
-    },
-    sockets: {
-      like (data) {
-        console.log(data)
       }
     }
   }
