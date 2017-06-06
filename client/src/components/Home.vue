@@ -25,6 +25,11 @@
               <textarea class="textarea" v-model="text" placeholder="Textarea"></textarea>
             </p>
           </div>
+          <div class="is-pulled-left">
+            <p>Add Image</p>
+            <input type="file" @change="imageChanged"  style="width: 200px;margin-right: 50px;"/>
+          </div>
+          <img ref="preview" height="64" width="64" style="margin: 10px;height: 80px;width: auto;" />
         </section>
         <footer class="modal-card-foot">
           <a class="button is-success" @click.prevent="sendMessage()">Send</a>
@@ -37,7 +42,6 @@
 
 <script>
 import { createPost } from '../../utils/users'
-import moment from 'moment'
 import posts from './post/Posts.vue'
 
 export default {
@@ -52,9 +56,6 @@ export default {
     }
   },
   methods: {
-    isToday (date) {
-      return moment().format('DD/MM/YYYY') === date
-    },
     sendMessage () {
       var tags = this.text.match(/#([^\s]*)/ig)
       tags = tags.map((x) => {
@@ -70,6 +71,15 @@ export default {
     },
     closeModal () {
       this.$refs.modal.style.display = 'none'
+    },
+    imageChanged (e) {
+      var fileReader = new FileReader()
+
+      fileReader.readAsDataURL(e.target.files[0])
+
+      fileReader.onload = (e) => {
+        this.$refs.preview.src = e.target.result
+      }
     }
   }
 }

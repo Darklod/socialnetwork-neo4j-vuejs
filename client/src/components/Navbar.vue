@@ -87,14 +87,16 @@ export default {
       document.querySelector('.nav-menu').classList.toggle('is-active')
     },
     getUser () {
-      var user = jwt.decode(this.$auth.getToken())
+      if (this.$auth.getToken()) {
+        var user = jwt.decode(this.$auth.getToken())
 
-      delete user['exp']
-      delete user['token']
+        delete user['exp']
+        delete user['token']
 
-      this.$auth.setAuthenticatedUser(user)
-      this.user = this.$auth.getAuthenticatedUser().username
-      this.isAuth = this.$auth.isAuthenticated()
+        this.$auth.setAuthenticatedUser(user)
+        this.user = this.$auth.getAuthenticatedUser().username
+        this.isAuth = this.$auth.isAuthenticated()
+      }
     }
   },
   computed: {

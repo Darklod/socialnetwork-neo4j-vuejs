@@ -11,7 +11,7 @@
       </div>
       <div v-if="post.postImage && post.postImage!=''" class="card-image">
         <figure class="image">
-          <img :src="'/static/images/'+post.postImage" alt="Image">
+          <img :src="'/static/images/' + post.postImage" alt="Image">
         </figure>
       </div>
       <div class="card-content">
@@ -24,7 +24,7 @@
             </div>
             <div class="level-right">
               <a class="level-item">
-                <span class="icon is-small" @click.prevent="toggleVote">
+                <span class="icon is-small" @click.prevent="toggleVote(post)">
                   <i v-if="post.liked" class="fa fa-heart"></i>
                   <i v-if="!post.liked" class="fa fa-heart-o"></i>
                 </span>
@@ -68,42 +68,40 @@
 
 <script>
 import moment from 'moment'
-import { upvotePost, downvotePost } from '../../../utils/users'
+//  import { upvotePost, downvotePost } from '../../../utils/users'
 export default {
-  props: ['post'],
+  props: ['post', 'toggleVote'],
   computed: {
     time () {
       return moment(moment.unix('' + this.post.createdAt)).fromNow()
     }
-  },
-  sockets: {
+  }
+  /*  ,sockets: {
     like (data) {
       if (data.like) {
         this.post.likes++
-        this.liked = true
+        this.post.liked = true
       } else {
         this.post.likes--
-        this.liked = false
+        this.post.liked = false
       }
     }
   },
   methods: {
     toggleVote () {
-      setTimeout(() => {
-        if (!this.liked) {
-          upvotePost().then(() => {
-            this.liked = !this.liked
-            this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: this.id, like: true })
-          })
-        } else {
-          downvotePost().then(() => {
-            this.liked = !this.liked
-            this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: this.id, like: false })
-          })
-        }
-      }, 0)
+      if (!this.post.liked) {
+        upvotePost().then(() => {
+          this.post.liked = !this.post.liked
+          this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: this.post.id, like: true })
+        })
+      } else {
+        downvotePost().then(() => {
+          this.post.liked = !this.post.liked
+          this.$socket.emit('like', { from: this.$auth.getAuthenticatedUser(), postId: this.post.id, like: false })
+        })
+      }
     }
-  }
+  }  */
 }
 </script>
 
