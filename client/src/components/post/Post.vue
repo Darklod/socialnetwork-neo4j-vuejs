@@ -122,6 +122,9 @@ export default {
   .card-content img, span{
     float: left;
   }
+  .card-image{
+    border-bottom: 1px solid lightgray;
+  }
   .header {
     border-bottom: 1px solid lightgray;
   }

@@ -1,46 +1,75 @@
 <template>
-  <div class="container">
-    
-
-    <center>
-      <h1>Title</h1>
-      <div>
-        <h1 class="is-pulled-left">Login</h1>
-        <img src="/static/images/icon.png"/>
-        <h1 class="is-pulled-right">Register</h1>
+    <div>
+      <div class="container">
+        <img class="is-pulled-left logo" src="/static/images/icon.png"/>
+        <h1 class="title">Social Graph</h1>
       </div>
-    </center>
-
-    <section class="section main">
-      <div class="columns">
-        <div class="column">
-     <div class="field">
-        <p class="control has-icons-left">
-          <input type="text" class="input" v-model="username" placeholder="Username">
-          <span class="icon is-small is-left">
-            <i class="fa fa-envelope"></i>
-          </span>
-        </p>
+      <div class="container">
+        <section class="section main">
+          <div class="columns"> 
+            <div class="column">
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                      <p class="control has-icons-left">
+                        <input type="text" class="input" v-model="username" placeholder="Username">
+                        <span class="icon is-small is-left">
+                          <i class="fa fa-envelope"></i>
+                        </span>
+                      </p>
+                  </div>
+                  <div class="field">
+                    <p class="control has-icons-left">
+                      <input class="input" type="password" v-model="password" placeholder="Password">
+                      <span class="icon is-small is-left">
+                        <i class="fa fa-lock"></i>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <button class="button is-success" @click="handleLogin">
+                        Login
+                      </button>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- REGISTER -->
+            <div class="column">
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                      <p class="control has-icons-left">
+                        <input type="text" class="input" v-model="username" placeholder="Username">
+                        <span class="icon is-small is-left">
+                          <i class="fa fa-envelope"></i>
+                        </span>
+                      </p>
+                  </div>
+                  <div class="field">
+                    <p class="control has-icons-left">
+                      <input class="input" type="password" v-model="password" placeholder="Password">
+                      <span class="icon is-small is-left">
+                        <i class="fa fa-lock"></i>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <button class="button is-success" @click="handleLogin">
+                        Login
+                      </button>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
-      <div class="field">
-        <p class="control has-icons-left">
-          <input class="input" type="password" v-model="password" placeholder="Password">
-          <span class="icon is-small is-left">
-            <i class="fa fa-lock"></i>
-          </span>
-        </p>
-      </div>
-      <div class="field">
-        <p class="control">
-          <button class="button is-success" @click="handleLogin">
-            Login
-          </button>
-        </p>
-      </div>
-    </div>
-    </div>
-    </section>
-  </div>
+   </div>
 </template>
 
 <script>
@@ -83,3 +112,18 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .logo {
+    height: 100px;
+    width: 100px;
+    margin-right: 10px;
+  }
+  .title {
+    font-size: 50px;
+    padding: 25px;
+  }
+  div{
+    background-color: white;
+  } 
+</style>
