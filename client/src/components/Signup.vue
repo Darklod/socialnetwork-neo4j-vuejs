@@ -64,9 +64,11 @@ export default {
   },
   mounted () {
     document.querySelector('.nav').style.display = 'none'
+    document.querySelector('.footer').style.display = 'none'
   },
   destroyed () {
     document.querySelector('.nav').style.display = 'flex'
+    document.querySelector('.footer').style.display = 'none'
   }
 }
 </script>

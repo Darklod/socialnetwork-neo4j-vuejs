@@ -1,13 +1,13 @@
 <template>
     <div>
       <div class="container">
-        <img class="is-pulled-left logo" src="/static/images/icon.png"/>
-        <h1 class="title">Social Graph</h1>
-      </div>
-      <div class="container">
         <section class="section main">
           <div class="columns"> 
-            <div class="column is-one-third">
+            <div class="column is-one-third is-offset-4">
+              <center>
+                <h1 class="title">Social Graph</h1>
+                <img class="logo" src="/static/images/icon.png"/>
+              </center>
               <div class="columns">
                 <div class="column">
                   <div class="field">
@@ -28,38 +28,11 @@
                   </div>
                   <div class="field">
                     <p class="control">
-                      <button class="button is-success" @click="handleLogin">
+                      <button class="button is-info is-pulled-right" @click="handleLogin">
                         Login
-                      </button>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- REGISTER -->
-            <div class="column is-offset-2 is-one-third">
-              <div class="columns">
-                <div class="column">
-                  <div class="field">
-                      <p class="control has-icons-left">
-                        <input type="text" class="input" v-model="username" placeholder="Username">
-                        <span class="icon is-small is-left">
-                          <i class="fa fa-envelope"></i>
-                        </span>
-                      </p>
-                  </div>
-                  <div class="field">
-                    <p class="control has-icons-left">
-                      <input class="input" type="password" v-model="password" placeholder="Password">
-                      <span class="icon is-small is-left">
-                        <i class="fa fa-lock"></i>
-                      </span>
-                    </p>
-                  </div>
-                  <div class="field">
-                    <p class="control">
-                      <button class="button is-success" @click="handleLogin">
-                        Login
+                      </button> 
+                      <button class="button is-pulled-right">
+                        <router-link to="/signup">Register Now</router-link>
                       </button>
                     </p>
                   </div>
@@ -106,9 +79,11 @@ export default {
   },
   mounted () {
     document.querySelector('.nav').style.display = 'none'
+    document.querySelector('.footer').style.display = 'none'
   },
   destroyed () {
     document.querySelector('.nav').style.display = 'flex'
+    document.querySelector('.footer').style.display = 'none'
   }
 }
 </script>
@@ -117,13 +92,26 @@ export default {
   .logo {
     height: 100px;
     width: 100px;
-    margin-right: 10px;
+    padding: 10px;
   }
   .title {
     font-size: 50px;
-    padding: 25px;
+    padding: 5px;
+    padding-top: 86px; 
   }
   div{
     background-color: white;
   } 
+  .section{
+    padding: 0;
+  }
+  .title:not(:last-child), .subtitle:not(:last-child){
+    margin-bottom: 0px;
+  }
+  button a {
+    color: #555;
+  }
+  p.control button{
+    margin-left: 10px; 
+  }
 </style>
