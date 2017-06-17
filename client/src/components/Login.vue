@@ -7,7 +7,7 @@
       <div class="container">
         <section class="section main">
           <div class="columns"> 
-            <div class="column">
+            <div class="column is-one-third">
               <div class="columns">
                 <div class="column">
                   <div class="field">
@@ -37,7 +37,7 @@
               </div>
             </div>
             <!-- REGISTER -->
-            <div class="column">
+            <div class="column is-offset-2 is-one-third">
               <div class="columns">
                 <div class="column">
                   <div class="field">
