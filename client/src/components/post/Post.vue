@@ -5,7 +5,7 @@
         <img :src="'/static/images/' + (post.userImage ?
                    'profiles/'+ post.userImage :
                    'default/avatar.png')">
-        <strong>{{post.username}}</strong>
+        <strong><router-link :to="'/users/' + post.username">{{post.username}}</router-link></strong>
         <div class="is-pulled-right"><small>{{time}}</small></div>
         <div style="clear:both"></div>
       </div>

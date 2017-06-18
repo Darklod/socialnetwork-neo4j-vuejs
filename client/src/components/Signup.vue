@@ -11,17 +11,25 @@
             </center>
             <br>
             <div class="box">
-              <label class="label">Name</label>
+              <label class="label">Firstname</label>
               <p class="control">
-                <input class="input" v-model="name" placeholder="John Smith" type="text">
+                <input class="input" v-model="firstname" placeholder="John" type="text">
+              </p>
+              <label class="label">Lastname</label>
+              <p class="control">
+                <input class="input" v-model="lastname" placeholder="Smith" type="text">
+              </p>
+              <label class="label">Username</label>
+              <p class="control">
+                <input class="input" v-model="username" placeholder="jsmith" type="text">
               </p>
               <label class="label">Email</label>
               <p class="control">
                 <input class="input" v-model="email" placeholder="jsmith@example.org" type="text">
               </p>
-              <label class="label">Username</label>
+              <label class="label">Phone (optional)</label>
               <p class="control">
-                <input class="input" v-model="username" placeholder="jsmith" type="text">
+                <input class="input" v-model="phone" placeholder="3444858583" type="text">
               </p>
               <hr>
               <label class="label">Password</label>
@@ -57,8 +65,10 @@ export default {
       username: '',
       password: '',
       password2: '',
-      name: '',
-      email: ''
+      firstname: '',
+      lastname: '',
+      email: '',
+      phone: ''
     }
   },
   methods: {
@@ -66,7 +76,9 @@ export default {
       var username = this.username
       var password = this.password
       var email = this.email
-      var name = this.name
+      var firstname = this.firstname
+      var lastname = this.lastname
+      var phone = this.phone
 
       if (password !== this.password2) {
         console.log('password doesn\'t match')
@@ -74,7 +86,7 @@ export default {
       }
 
       var host = 'localhost' || '172.22.20.49'
-      axios.post('http://' + host + ':3000/register', { username, password, email, name }).then(response => {
+      axios.post('http://' + host + ':3000/register', { username, password, email, firstname, lastname, phone }).then(response => {
         console.log(response.data)
         if (response.data.success) {
           this.$router.push('/')

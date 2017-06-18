@@ -16,7 +16,7 @@
         <section class="modal-card-body">
           <div class="field">
             <p class="control">
-              <textarea class="textarea" v-model="text" placeholder="Textarea"></textarea>
+              <textarea class="textarea" v-model="text" placeholder="Write a message..."></textarea>
             </p>
           </div>
           <div class="is-pulled-left">
@@ -107,14 +107,5 @@ export default {
   }
   .modal-card-body {
     padding: 15px 20px 0px 20px;
-  }
-  .margin{
-    margin: 0px;
-  }
-  @media only screen and (min-width: 768px){
-    .margin{
-      margin-left: 20%;
-      margin-right: 20%;
-    }
   }
 </style>

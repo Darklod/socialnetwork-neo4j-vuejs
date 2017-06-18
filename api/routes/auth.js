@@ -16,9 +16,13 @@ router.post('/register', (req, res) => {
       email: req.body.email,
       pwd: req.body.password,
       usr: req.body.username,
-      first: req.body.name.split(' ')[0],
-      last: req.body.name.split(' ')[1]
+      first: req.body.firstname,
+      last: req.body.lastname
     };
+
+    if (req.body.phone && req.body.phone != '') {
+      user["phone"] = req.body.phone
+    }
 
     var errors = [];
     for (var i in user){

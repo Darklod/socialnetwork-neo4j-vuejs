@@ -78,9 +78,6 @@
         }
       }
     },
-    created () {
-      this.getPosts()
-    },
     mounted () {
       this.getPosts()
     },
@@ -112,3 +109,15 @@
     }
   }
 </script>
+
+<style scoped>
+  .margin{
+    margin: 0px;
+  }
+  @media only screen and (min-width: 768px){
+    .margin{
+      margin-left: 25%;
+      margin-right: 25%;
+    }
+  }
+</style>
