@@ -103,7 +103,8 @@ import { getUserByUsername,
          IsFollowed,
          Follows,
          Unfollows,
-         getPostsByUsername
+         getPostsByUsername,
+         UpdateUser
         } from '../../utils/users'
 import Masonry from 'masonry-layout'
 
@@ -182,6 +183,8 @@ export default {
 
       fileReader.onload = (e) => {
         this.$refs.image.src = e.target.result
+        UpdateUser({image: e.target.result}).then((res) => {
+        })
       }
     },
     coverChanged (e) {
@@ -191,6 +194,8 @@ export default {
 
       fileReader.onload = (e) => {
         this.$refs.cover.style.backgroundImage = 'url("' + e.target.result + '")'
+        UpdateUser({cover: e.target.result}).then((res) => {
+        })
       }
     }
   },

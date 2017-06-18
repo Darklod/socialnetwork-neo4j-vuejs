@@ -17,7 +17,8 @@ export { getUsers,
          getFollowedByUsername,
          IsFollowed,
          Follows,
-         Unfollows }
+         Unfollows,
+         UpdateUser }
 
 const token = 'JWT ' + localStorage.getItem('token')
 
@@ -99,4 +100,9 @@ function Follows (user) {
 function Unfollows (user) {
   const url = `${BASE_URL}/api/users/me/follows/` + user
   return axios.delete(url, {'headers': { 'Authorization': token }}).then(response => response.data)
+}
+
+function UpdateUser (data) {
+  const url = `${BASE_URL}/api/users/me/`
+  return axios.put(url, data, {'headers': { 'Authorization': token }}).then(response => response.data)
 }

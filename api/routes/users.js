@@ -577,6 +577,71 @@ router.delete('/me/likes/:post', (req, res) => {
   });
 });
 
+router.put('/me/', (req, res) => {
+    var me = req.user.username;
+
+    var data = {
+      me: me
+    };
+
+    var cql = 'MATCH (n:User{usr: $me}) ';
+
+    if (req.body.phone) { 
+      data["phone"] = req.body.phone;
+      cql += " SET n.phone = $phone";
+    }
+    if (req.body.email) {
+      data["email"] = req.body.email;
+      cql += " SET n.email = $email";
+    }
+
+    if (req.body.image) {
+      var base64 = req.body.image.split(',')[1];
+      var format = req.body.image.split(',')[0].split('/')[1].split(';')[0];
+      var path = __dirname + '/../../client/static/images/profiles/' + md5(base64) + '.' + format;
+
+      fs.writeFile(path, base64, {encoding: 'base64'} , function (err) {
+        if (err) {
+            console.log(err)
+            return res.json({err: err});
+        }    
+      });
+      
+      data['image'] = md5(base64) + '.' + format;
+      cql += " SET n.image = $image";
+    }
+
+    if (req.body.cover) {
+      var base64 = req.body.cover.split(',')[1];
+      var format = req.body.cover.split(',')[0].split('/')[1].split(';')[0];
+      var path = __dirname + '/../../client/static/images/profiles/' + md5(base64) + '.' + format;
+
+      fs.writeFile(path, base64, {encoding: 'base64'} , function (err) {
+        if (err) {
+          console.log(err)
+          return res.json({err: err});
+        }    
+      });
+      
+      data['cover'] = md5(base64) + '.' + format;
+      cql += " SET n.cover = $cover";
+    }
+
+    session.run(cql, data)
+    .then((results) => {
+      console.log(results);
+      res.json({
+        success: true
+      });
+    }).catch((error) => {
+      console.log(error);
+      res.status(500).json({
+        success: false,
+        error: error
+      });
+    });
+})
+
 router.post('/me/follows/', (req, res) => {
   var me = req.user.username;
   var other = req.body.user;
