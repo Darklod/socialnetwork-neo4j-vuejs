@@ -20,7 +20,6 @@
            <br/>
            <div v-if="!IsTheLoggedUser()" class="right">
               <a class="button is-primary" @click.prevent="ToggleFollow()">{{IsFollowed}}</a>
-              <a href="currentUser.username">Scrivi</a>
            </div>
            <div>
               <p class="description"><strong>{{ currentUser.firstname }} {{ currentUser.lastname }} </strong>{{ currentUser.description }}</p>
@@ -76,9 +75,11 @@ export default {
   },
   computed: {
     IsFollowed () {
-      var res = IsFollowed(this.currentUser.username)
-      this.follows = res
-      return res ? 'Followed' : 'Follows'
+      return 'ciao'
+      /*  IsFollowed(this.currentUser.username).then((res) => {
+        this.follows = res
+        return res ? 'Followed' : 'Follows'
+      })  */
     }
   }
 }

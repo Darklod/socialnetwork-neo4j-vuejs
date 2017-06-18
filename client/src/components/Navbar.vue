@@ -136,17 +136,19 @@ export default {
       }
     }
 
+    this.getUser()
     document.querySelector('.nav-toggle').classList.remove('is-active')
     document.querySelector('.nav-menu').classList.remove('is-active')
-  },
-  created () {
-    this.getUser()
+    document.querySelector('.results').style.display = 'none'
   },
   watch: {
-    $route: function () {
+    '$route': function () {
       this.getUser()
       document.querySelector('.nav-toggle').classList.remove('is-active')
       document.querySelector('.nav-menu').classList.remove('is-active')
+      document.querySelector('.results').style.display = 'none'
+      this.query = ''
+      document.querySelector('#search').value = ''
     }
   }
 }

@@ -26,11 +26,11 @@
                </div>
                <br/>
                <div v-if="!IsTheLoggedUser" class="right">
-                  <a class="button is-primary" @click.prevent="ToggleFollow()">{{follows}}</a>
+                  <a class="button is-primary follow" @click.prevent="ToggleFollow()">{{follows ? 'Following' : 'Follow'}}</a>
                </div>
                <div>
                   <p class="description">
-                    <strong>{{ currentUser.firstname }} {{ currentUser.lastname }} </strong>
+                    <strong>{{ currentUser.firstname }} {{ currentUser.lastname }} </strong> -
                     {{ currentUser.description }}
                   </p>
                </div>
@@ -114,17 +114,19 @@ export default {
       followers: 0,
       followed: 0,
       posts: [],
-      follows: null
+      follows: true
     }
   },
   methods: {
     ToggleFollow () {
       if (!this.follows) {
-        Follows(this.loggedUser.username, this.currentUser.username)
+        Follows(this.loggedUser.username, this.currentUser.username).then((res) => {
+          //  if success
+          this.follows = !this.follows
+        })
       } else {
         //  Unfollows()
       }
-      this.follows = !this.follows
     },
     Reload (username) {
       getUserByUsername(username).then(response => {
@@ -162,6 +164,10 @@ export default {
           }
         }, 400) //  !!!!!!
       })
+      IsFollowed(username).then((response) => {
+        this.follows = response.success
+        //  document.querySelector('.follow').innerHTML = this.follows ? 'Follows' : 'Followed'
+      })
     },
     imageChanged (e) {
       var fileReader = new FileReader()
@@ -188,16 +194,19 @@ export default {
     },
     loggedUser () {
       return this.$auth.getAuthenticatedUser()
-    },
-    IsFollowed () {
-      IsFollowed(this.currentUser.username).then((response) => {
-        this.follows = response.success
-        return response.success ? 'Follows' : 'Followed'
-      })
     }
+  },
+  created () {
+    this.Reload(this.$route.params.username)
   },
   mounted () {
     this.Reload(this.$route.params.username)
+  },
+  watch: {
+    '$route': function () {
+      console.log('prova')
+      this.Reload(this.$route.params.username)
+    }
   }
 }
 </script>
