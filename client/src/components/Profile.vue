@@ -102,6 +102,7 @@ import { getUserByUsername,
          getFollowedByUsername,
          IsFollowed,
          Follows,
+         Unfollows,
          getPostsByUsername
         } from '../../utils/users'
 import Masonry from 'masonry-layout'
@@ -120,12 +121,17 @@ export default {
   methods: {
     ToggleFollow () {
       if (!this.follows) {
-        Follows(this.loggedUser.username, this.currentUser.username).then((res) => {
-          //  if success
-          this.follows = !this.follows
+        Follows(this.currentUser.username).then((res) => {
+          if (res.success) {
+            this.follows = true
+          }
         })
       } else {
-        //  Unfollows()
+        Unfollows(this.currentUser.username).then((res) => {
+          if (res.success) {
+            this.follows = false
+          }
+        })
       }
     },
     Reload (username) {

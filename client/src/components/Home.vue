@@ -26,8 +26,8 @@
             </p>
           </div>
           <div class="is-pulled-left">
-            <p>Add Image</p>
-            <input type="file" @change="imageChanged"  style="width: 200px;margin-right: 50px;"/>
+            <input type="file" id="file" @change="imageChanged"  style="display:none;margin-right: 50px;"/>
+            <label for="file" class="button is-primary">Add Image</label>
           </div>
           <img ref="preview" height="64" width="64" style="margin: 10px;height: 80px;width: auto;" />
         </section>
@@ -58,19 +58,26 @@ export default {
   methods: {
     sendMessage () {
       var tags = this.text.match(/#([^\s]*)/ig)
-      tags = tags.map((x) => {
-        return x.substring(1)
-      })
+      if (tags) {
+        tags = tags.map((x) => {
+          return x.substring(1)
+        })
+      }
       createPost(this.text, this.image, tags).then((res) => {
         //  this.$children.posts.getPosts()
         //  should refresh posts list
       })
+      this.closeModal()
     },
     openModal () {
       this.$refs.modal.style.display = 'block'
     },
     closeModal () {
       this.$refs.modal.style.display = 'none'
+
+      this.$refs.preview.removeAttribute('src')
+      document.querySelector('input[type=file]').value = ''
+      this.text = ''
     },
     imageChanged (e) {
       var fileReader = new FileReader()
@@ -107,6 +114,9 @@ export default {
     right: 0;
     margin: auto;
     height: 400px;
+  }
+  .modal-card-body {
+    padding: 15px 20px 0px 20px;
   }
   .margin{
     margin: 0px;

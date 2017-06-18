@@ -31,9 +31,11 @@
                       <button class="button is-info is-pulled-right" @click="handleLogin">
                         Login
                       </button> 
-                      <button class="button is-pulled-right">
-                        <router-link to="/signup">Register Now</router-link>
-                      </button>
+                      <router-link to="/signup">
+                        <button class="button is-pulled-right">
+                          Register Now
+                        </button>
+                      </router-link>
                     </p>
                   </div>
                 </div>

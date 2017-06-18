@@ -307,15 +307,18 @@ router.get('/me/messages/:username', (req, res) => {
 router.post('/me/messages/:username', (req, res) => {
   var me = req.user.username;
   var username = req.params.username;
-  var message = req.body;
 
   //controlli
-  message = {
-    text: message.text,
-    image: message.image,
+  var message = {
+    text: req.body.text,
     hour: moment().format('HH:mm'),
     date: moment().format('DD/MM/YYYY')
   }
+
+  if (message.image) {
+    message['image'] = req.body.image;
+  }
+
   session.run(
       'OPTIONAL MATCH (a:User{usr:$me}),(b:User{usr:$username}) CREATE (a)-[r:SEND]->(c:Message $msg)-[s:TO]->(b) SET c.createdAt = timestamp() ', {
         'username': username,
@@ -423,7 +426,7 @@ router.post('/me/posts', (req, res) => {
              CREATE (b:Post) SET b = $post SET b.createdAt = "" + timestamp() \
              CREATE (a)-[:POSTS]->(b)';
 
-  var data = { post: post};
+  var data = { post: post };
   data["id"] = id;
 
   if(tags) {
@@ -436,18 +439,20 @@ router.post('/me/posts', (req, res) => {
             CREATE (p)-[:HAS]->(t))'
   }
   
-  var base64 = req.body.image.split(',')[1];
-  var format = req.body.image.split(',')[0].split('/')[1].split(';')[0];
-  var path = __dirname + '/../../client/static/images/' + md5(base64) + '.' + format;
+  if (req.body.image) {
+    var base64 = req.body.image.split(',')[1];
+    var format = req.body.image.split(',')[0].split('/')[1].split(';')[0];
+    var path = __dirname + '/../../client/static/images/' + md5(base64) + '.' + format;
 
-  fs.writeFile(path, base64, {encoding: 'base64'} , function (err) {
-    if (err) {
-        console.log(err)
-        return res.json({err: err});
-    }    
-  });
+    fs.writeFile(path, base64, {encoding: 'base64'} , function (err) {
+      if (err) {
+          console.log(err)
+          return res.json({err: err});
+      }    
+    });
 
-  data.post['image'] = md5(base64) + '.' + format;
+    data.post['image'] = md5(base64) + '.' + format;
+  }
   
   session.run(cql, data)
     .then((results) => {
@@ -468,7 +473,7 @@ router.get('/posts/:tag', (req, res) => {
   var tag = req.params.tag;
   var usr = req.user.username;
 
-  var cql = 'MATCH (u:User{usr:$usr}),(a:Post)-[r:HAS]->(b:Tag) WHERE b.tag = $tag RETURN a.date as date,\
+  var cql = 'MATCH (u:User{usr:$usr}),(n:User)-[s:POSTS]->(a:Post)-[r:HAS]->(b:Tag) WHERE b.tag = $tag RETURN n.usr as username, n.image as userImage ,a.date as date,\
 			       a.image as image, a.hour as hour, a.text as text, ID(a) as id, a.createdAt as createdAt,\
              size((a)<-[:LIKES]-(:User)) as likes, size((u)-[:LIKES]->(a))>0 as liked\
              ORDER BY a.createdAt DESC';
@@ -572,8 +577,50 @@ router.delete('/me/likes/:post', (req, res) => {
   });
 });
 
-//   POST   /me/follows/:user
-//   DELETE /me/follows/:user
+router.post('/me/follows/', (req, res) => {
+  var me = req.user.username;
+  var other = req.body.user;
+
+  session.run(
+      'MATCH (a:User),(b:User) WHERE a.usr = $u1 AND b.usr = $u2 CREATE UNIQUE (a)-[r:FOLLOWS]->(b)', {
+        'u1': me,
+        'u2': other
+      })
+    .then((result) => {
+      res.json({
+        success: result.summary.counters._stats.relationshipsCreated > 0
+      });
+      session.close();
+    })
+    .catch((error) => {
+      console.log(error);
+      res.json({
+        error: error
+      });
+    })
+});
+
+router.delete('/me/follows/:user', (req, res) => {
+  var me = req.user.username;
+  var other = req.params.user;
+
+  session.run(
+      'MATCH (a:User)-[r:FOLLOWS]->(b:User) WHERE a.usr = $me AND b.usr = $other DELETE r', {
+        'me': me,
+        'other': other
+      })
+    .then((result) => {
+      session.close();
+      res.json({
+        success: result.summary.counters._stats.relationshipsDeleted > 0
+      });
+    })
+    .catch((error) => {
+      res.json({
+        error: error
+      });
+    });
+});
 
 function applyChanges(res, user) {
   var cql = "SET ";

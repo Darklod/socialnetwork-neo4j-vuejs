@@ -54,7 +54,6 @@ export default {
     getMessages () {
       if (this.$route.params.username) {
         getMessages(this.$route.params.username).then((response) => {
-          console.log(response[0])
           var date = null
           var messages = []
           //  works only if the list is already ordered
@@ -81,6 +80,7 @@ export default {
         smoothScroll(elem, elem.scrollHeight, 2000)
         //  }
       })
+      this.text = ''
     }
   },
   created () {

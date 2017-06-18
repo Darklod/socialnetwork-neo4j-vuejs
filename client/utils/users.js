@@ -16,7 +16,8 @@ export { getUsers,
          getFollowersByUsername,
          getFollowedByUsername,
          IsFollowed,
-         Follows }
+         Follows,
+         Unfollows }
 
 const token = 'JWT ' + localStorage.getItem('token')
 
@@ -85,12 +86,17 @@ function createMessage (username, text, image) {
   return axios.post(url, {text, image}, {'headers': { 'Authorization': token }}).then(response => response.data)
 }
 
-function IsFollowed (usr) {
-  const url = `${BASE_URL}/api/users/me/follows/` + usr
+function IsFollowed (user) {
+  const url = `${BASE_URL}/api/users/me/follows/` + user
   return axios.get(url, {'headers': { 'Authorization': token }}).then(response => response.data)
 }
 
-function Follows (user1, user2) {
-  const url = `${BASE_URL}/api/follows/`
-  return axios.post(url, {user1, user2}, {'headers': { 'Authorization': token }}).then(response => response.data)
+function Follows (user) {
+  const url = `${BASE_URL}/api/users/me/follows/`
+  return axios.post(url, {user}, {'headers': { 'Authorization': token }}).then(response => response.data)
+}
+
+function Unfollows (user) {
+  const url = `${BASE_URL}/api/users/me/follows/` + user
+  return axios.delete(url, {'headers': { 'Authorization': token }}).then(response => response.data)
 }
