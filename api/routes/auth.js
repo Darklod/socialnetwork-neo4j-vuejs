@@ -8,6 +8,7 @@ var config = require('../config/config');
 var session = require('../config/db').session;
 
 router.post('/register', (req, res) => {
+  console.log(req.body)
   if(!req.body.email || !req.body.password) {
     res.json({ success: false, message: 'Please enter email and password.' });
   } else {
@@ -15,10 +16,8 @@ router.post('/register', (req, res) => {
       email: req.body.email,
       pwd: req.body.password,
       usr: req.body.username,
-      first: req.body.firstname,
-      last: req.body.lastname,
-      image: req.body.image,
-      cover: req.body.cover
+      first: req.body.name.split(' ')[0],
+      last: req.body.name.split(' ')[1]
     };
 
     var errors = [];

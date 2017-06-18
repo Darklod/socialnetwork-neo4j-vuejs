@@ -4,40 +4,39 @@
       <div class="container">
         <div class="columns is-vcentered">
           <div class="column is-4 is-offset-4">
-            <h1 class="title">
-              Register an Account
-            </h1>
+            <center>
+              <h1 class="title">
+                Register an Account
+              </h1>
+            </center>
+            <br>
             <div class="box">
-              <label class="label">Firstname</label>
+              <label class="label">Name</label>
               <p class="control">
-                <input class="input" placeholder="John" type="text">
-              </p>
-              <label class="label">Laststname</label>
-              <p class="control">
-                <input class="input" placeholder="Smith" type="text">
+                <input class="input" v-model="name" placeholder="John Smith" type="text">
               </p>
               <label class="label">Email</label>
               <p class="control">
-                <input class="input" placeholder="jsmith@example.org" type="text">
+                <input class="input" v-model="email" placeholder="jsmith@example.org" type="text">
               </p>
               <label class="label">Username</label>
               <p class="control">
-                <input class="input" placeholder="jsmith" type="text">
+                <input class="input" v-model="username" placeholder="jsmith" type="text">
               </p>
               <hr>
               <label class="label">Password</label>
               <p class="control">
-                <input class="input" placeholder="●●●●●●●" type="password">
+                <input class="input" v-model="password" placeholder="●●●●●●●" type="password">
               </p>
               <label class="label">Confirm Password</label>
               <p class="control">
-                <input class="input" placeholder="●●●●●●●" type="password">
+                <input class="input" v-model="password2" placeholder="●●●●●●●" type="password">
               </p>
               <hr>
               <p class="control">
-                <button class="button is-primary">Register</button>
-                <button class="button is-default">Cancel</button>
+                <button class="button is-primary is-pulled-right" @click.prevent="handleSignup">Register</button>
               </p>
+              <div style="clear:both"></div>
             </div>
             <p class="has-text-centered">
               <router-link to="/Login">Already have an account? Login</router-link>
@@ -46,29 +45,42 @@
         </div>
       </div>
     </div>
-
   </section>
 </template>
 
 <script>
-
+import axios from 'axios'
 export default {
   name: 'signup',
   data () {
     return {
       username: '',
-      password: ''
+      password: '',
+      password2: '',
+      name: '',
+      email: ''
     }
   },
   methods: {
-  },
-  mounted () {
-    document.querySelector('.nav').style.display = 'none'
-    document.querySelector('.footer').style.display = 'none'
-  },
-  destroyed () {
-    document.querySelector('.nav').style.display = 'flex'
-    document.querySelector('.footer').style.display = 'none'
+    handleSignup () {
+      var username = this.username
+      var password = this.password
+      var email = this.email
+      var name = this.name
+
+      if (password !== this.password2) {
+        console.log('password doesn\'t match')
+        return
+      }
+
+      var host = 'localhost' || '172.22.20.49'
+      axios.post('http://' + host + ':3000/register', { username, password, email, name }).then(response => {
+        console.log(response.data)
+        if (response.data.success) {
+          this.$router.push('/')
+        }
+      })
+    }
   }
 }
 </script>

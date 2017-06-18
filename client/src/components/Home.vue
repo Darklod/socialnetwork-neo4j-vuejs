@@ -1,12 +1,6 @@
 <template>
   <div class="home">
-    <section class="section main">
-      <div class="container">
-        <div class="margin">
-          <posts-list></posts-list>
-        </div>
-      </div>
-    </section>
+    <posts-list></posts-list>
 
     <button class="button is-primary floating icon is-small add" @click.prevent="openModal()">
       <i class="material-icons">add</i>
@@ -74,19 +68,15 @@ export default {
     },
     closeModal () {
       this.$refs.modal.style.display = 'none'
-
       this.$refs.preview.removeAttribute('src')
       document.querySelector('input[type=file]').value = ''
       this.text = ''
     },
     imageChanged (e) {
       var fileReader = new FileReader()
-
       fileReader.readAsDataURL(e.target.files[0])
-
       //  this.data = new FormData()
       //  this.data.append('image', e.target.files[0])
-
       fileReader.onload = (e) => {
         this.$refs.preview.src = e.target.result
         this.image = e.target.result

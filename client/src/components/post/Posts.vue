@@ -1,7 +1,29 @@
 <template>
-  <div v-if="posts && posts.length">
-    <div class="grid">
-      <post v-for="post in posts" :key="post.id" :toggleVote="toggleVote" :post="post"></post>  <!-- REMEBER TO PASS PROPS HERE !!!! -->
+  <div>
+    <div v-if="posts && posts.length">
+      <section class="section main">
+        <div class="container">
+          <div class="margin">
+            <div class="grid">
+              <post v-for="post in posts" :key="post.id" :toggleVote="toggleVote" :post="post"></post>  <!-- REMEBER TO PASS PROPS HERE !!!! -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div v-if="!posts.length">
+      <section class="hero is-medium is-primary is-bold" style="padding-top:50px">
+        <div class="hero-body">
+          <div class="container">
+            <h1 class="title">
+              You have no posts yet!
+            </h1>
+            <h2 class="subtitle">
+              Start following some friend
+            </h2>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>

@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <navbar></navbar>
-    <transition name="fade" mode="out-in">
+    <navbar v-if="canShow" ></navbar>
+    <transition name="fade" duration="200" mode="out-in">
       <router-view :key="$route.params.username"></router-view>
     </transition>
-    <footer class="footer">
+    <footer v-if="canShow" class="footer">
       <div class="container">
         <div class="content has-text-centered">
           <p>
@@ -28,6 +28,11 @@ export default {
   name: 'app',
   components: {
     'navbar': navbar
+  },
+  computed: {
+    canShow () {
+      return this.$route.name !== 'Login' && this.$route.name !== 'Signup'
+    }
   }
 }
 </script>
@@ -52,8 +57,16 @@ export default {
     padding-top: 84px;
     background-color: inherit;
   }
+  .footer{
+    z-index: -1;
+  }
+  .footer.fixed {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+  }
   .fade-enter-active, .fade-leave-active {
-    transition: opacity .2s
+    transition: opacity .15s
   }
   .fade-enter, .fade-leave-active {
       opacity: 0
